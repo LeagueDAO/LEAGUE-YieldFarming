@@ -1,11 +1,11 @@
-# EnterDAO YieldFarm contracts
+# LeagueDAO YieldFarm contracts
 
 ## Running tests
 **Note:** The result of tests is readily available [here](./test-results.md).
 
 ### 1. Clone this repo
 ```shell
-git clone https://github.com/EnterDAO/ENTER-YieldFarming
+git clone https://github.com/LeagueDAO/LEAGUE-YieldFarming
 ```
 
 ### 2. Install dependencies
@@ -21,7 +21,7 @@ npm test
 npm run coverage
 ```
 
-EnterDAO YeldFarming is a fork of BarnBridge YeldFarming. Here you can find the original contract audits and more info about the the architecture:
+LeagueDAO YeldFarming is a fork of BarnBridge YeldFarming. Here you can find the original contract audits and more info about the the architecture:
 ### [Smart Contract External Audit](https://github.com/BarnBridge/BarnBridge-YieldFarming/blob/master/BarnBridge-Yield-Farming-and-Incentivization-AUDIT.pdf)
 
 ## Smart Contract Architecture
@@ -29,7 +29,7 @@ EnterDAO YeldFarming is a fork of BarnBridge YeldFarming. Here you can find the 
 
 # Active Contracts
 
-## Mainnet Contracts
+## Mainnet Contracts - To Be Changed
 
 [Staking](https://etherscan.io/address/0x3F148612315AaE2514AC630D6FAf0D94B8Cd8E33#code)
 
@@ -49,10 +49,10 @@ EnterDAO YeldFarming is a fork of BarnBridge YeldFarming. Here you can find the 
 
 [Yield Farm SUSHI](https://etherscan.io/address/0xA9B4B5e05EF90cFb8644591186AbCf883eDA5735#code)
 
-## Rinkeby Contracts
+## Rinkeby Contracts To be changed
 
 ### YieldFarmGenericToken.sol
-The farming rewards are paid in the Rinkeby ENTR: 0x822a5c31679f4a580deb6ae4596437acdb9ddcab
+The farming rewards are paid in the Rinkeby LEAG: 0x822a5c31679f4a580deb6ae4596437acdb9ddcab
 
 We have 5 mock tokens for farming
 

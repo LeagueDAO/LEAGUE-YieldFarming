@@ -12,7 +12,7 @@ contract YieldFarmSushiLPToken {
     using SafeMath for uint128;
 
     // constants
-    uint public constant TOTAL_DISTRIBUTED_AMOUNT = 13_000_000;
+    uint public constant TOTAL_DISTRIBUTED_AMOUNT = 150_000_000;
     uint public constant NR_OF_EPOCHS = 100;
     uint128 public constant EPOCHS_DELAYED_FROM_STAKING_CONTRACT = 2;
 
@@ -22,7 +22,7 @@ contract YieldFarmSushiLPToken {
     address private _poolTokenAddress;
     address private _communityVault;
     // contracts
-    IERC20 private _entr;
+    IERC20 private _leag;
     IStaking private _staking;
 
 
@@ -39,7 +39,7 @@ contract YieldFarmSushiLPToken {
 
     // constructor
     constructor(address poolTokenAddress, address entrTokenAddress, address stakeContract, address communityVault) public {
-        _entr = IERC20(entrTokenAddress);
+        _leag = IERC20(entrTokenAddress);
         _poolTokenAddress = poolTokenAddress;
         _staking = IStaking(stakeContract);
         _communityVault = communityVault;
@@ -67,7 +67,7 @@ contract YieldFarmSushiLPToken {
         emit MassHarvest(msg.sender, epochId - lastEpochIdHarvested[msg.sender], totalDistributedValue);
 
         if (totalDistributedValue > 0) {
-            _entr.transferFrom(_communityVault, msg.sender, totalDistributedValue);
+            _leag.transferFrom(_communityVault, msg.sender, totalDistributedValue);
         }
 
         return totalDistributedValue;
@@ -79,7 +79,7 @@ contract YieldFarmSushiLPToken {
         require (lastEpochIdHarvested[msg.sender].add(1) == epochId, "Harvest in order");
         uint userReward = _harvest(epochId);
         if (userReward > 0) {
-            _entr.transferFrom(_communityVault, msg.sender, userReward);
+            _leag.transferFrom(_communityVault, msg.sender, userReward);
         }
         emit Harvest(msg.sender, epochId, userReward);
         return userReward;

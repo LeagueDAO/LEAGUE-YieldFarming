@@ -2,39 +2,39 @@ const hre = require('hardhat')
 const ethers = hre.ethers;
 const BN = ethers.BigNumber
 
-async function deployMainnet(entrTokenAddress, communityVaultAddress, startTime, daysPerEpoch) {
+async function deployMainnet(tokenAddress, communityVaultAddress, startTime, daysPerEpoch) {
 
     const poolTokenAddresses = [
-        { name: 'XYZ', address: '0x618679df9efcd19694bb1daa8d00718eacfa2883' },
-        { name: 'MANA', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' },
-        { name: 'SAND', address: '0x3845badade8e6dff049820680d1f14bd3903a5d0' },
         { name: 'ILV', address: '0x767fe9edc9e0df98e07454847909b5e959d7ca0e' },
-        { name: 'AXS', address: '0xbb0e17ef65f82ab018d8edd776e8dd940327b28b' },
         { name: 'BOND', address: '0x0391d2021f89dc339f60fff84546ea23e337750f' },
+        { name: 'XYZ', address: '0x618679df9efcd19694bb1daa8d00718eacfa2883' },
+        { name: 'IONX', address: '0x02d3a27ac3f55d5d91fb0f52759842696a864217' },
+        { name: 'LINK', address: '0x514910771af9ca656af840dff83e8264ecf986ca' },
         { name: 'SNX', address: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f' },
-        // { name: 'LEAG', address: '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2' }
+        { name: 'ENTR', address: '0xd779eEA9936B4e323cDdff2529eb6F13d0A4d66e' },
+        { name: 'SUSHI', address: '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2' }
     ];
 
-    return deploy(entrTokenAddress, communityVaultAddress, startTime, daysPerEpoch, _sushiSwapToken, poolTokenAddresses)
+    return deploy(tokenAddress, communityVaultAddress, startTime, daysPerEpoch, poolTokenAddresses)
 }
 
-async function deployRinkeby(entrTokenAddress, communityVaultAddress, startTime, daysPerEpoch) {
+async function deployRinkeby(tokenAddress, communityVaultAddress, startTime, daysPerEpoch) {
 
     const poolTokenAddresses = [
-        { name: 'XYZ', address: '0xB9FB3ad09457e92c710682BE066bC7b8bA5E42D6' },
-        { name: 'MANA', address: '0x6c18AcA9D282fa7077D27ecaa8FC45039e50C42d' },
-        { name: 'SAND', address: '0x20e2e606F5e6b608A442Dd43EB3F29ce9aE9Eb08' },
-        { name: 'ILV', address: '0xAffA6e1DC32A7ac6fa04Dc5D07dDEFD8AC1C3e48' },
-        { name: 'AXS', address: '0x917cc2D7c43a1BdB907080b50b0F124b4e44984E' },
-        { name: 'BOND', address: '0x6bBe0A4C0FD35ef717A7D9F0a4184529A1eB65c2' },
-        { name: 'SNX', address: '0xA71f0e0FaC12e2c888858C4195B160411e3F9F45' },
-        // { name: 'LEAG', address: '0x03561a7965372c2d71b8ba6aE3D84DAa91dA4fd4' }
+        { name: 'ILV', address: '0xe29DE2A505936f51Db19146c3d927C04F06377cF' },
+        { name: 'BOND', address: '0xa3c223e51d22D935918ae78c823294760a08575C' },
+        { name: 'XYZ', address: '0xd205F34d1d89db62eE6E09E32f7794fA35fE136A' },
+        { name: 'IONX', address: '0x0ebb2D1609d595788f53ceB9E41bfbaCffaafD68' },
+        { name: 'LINK', address: '0x21E5A30D8A325c24920570bEF1F30E48EB1bF0Ba' },
+        { name: 'SNX', address: '0x1949C607b7ca4cDFe7b0BB17F603097FA7922B93' },
+        { name: 'ENTR', address: '0xaE1d5311A5743De2aCaa455E0377BbAbF04C3f2a' },
+        { name: 'SUSHI', address: '0x5468B27593693e79E5Bc42Af636edf17318FD0f3' }
     ];
 
-    return deploy(entrTokenAddress, communityVaultAddress, startTime, daysPerEpoch, poolTokenAddresses)
+    return deploy(tokenAddress, communityVaultAddress, startTime, daysPerEpoch, poolTokenAddresses)
 }
 
-async function deployGenericYF(communityVaultAddress, entrTokenAddress, stakingAddress, tokenAddress) {
+async function deployGenericYF(communityVaultAddress, tokenAddress, stakingAddress, tokenAddress) {
     await hre.run('compile'); // We are compiling the contracts using subtask
     const [deployer] = await ethers.getSigners(); // We are getting the deployer
 
@@ -46,10 +46,10 @@ async function deployGenericYF(communityVaultAddress, entrTokenAddress, stakingA
     const staking = await ethers.getContractAt('Staking', stakingAddress)
 
     const YieldFarmGenericToken = await ethers.getContractFactory('YieldFarmGenericToken')
-    const yf = await YieldFarmGenericToken.deploy(tokenAddress, entrTokenAddress, staking.address, communityVaultAddress)
+    const yf = await YieldFarmGenericToken.deploy(tokenAddress, tokenAddress, staking.address, communityVaultAddress)
     await yf.deployTransaction.wait(5)
     console.log(`YieldFarmGenericToken pool : `, yf.address)
-    await cv.setAllowance(yf.address, BN.from(1000000).mul(tenPow18))
+    await cv.setAllowance(yf.address, BN.from(10000000).mul(tenPow18))
 
     console.log("Manual initing epoch 0...");
     await staking.manualEpochInit([tokenAddress], 0)
@@ -57,14 +57,14 @@ async function deployGenericYF(communityVaultAddress, entrTokenAddress, stakingA
     console.log(`Verifying Token ...`);
     await hre.run("verify:verify", {
         address: yf.address,
-        constructorArguments: [tokenAddress, entrTokenAddress, staking.address, communityVaultAddress],
+        constructorArguments: [tokenAddress, tokenAddress, staking.address, communityVaultAddress],
         contract: "contracts/YieldFarmGenericToken.sol:YieldFarmGenericToken",
     });
 
     console.log('Done!');
 }
 
-async function deploySushiLPYF(communityVaultAddress, entrTokenAddress, stakingAddress, _sushiSwapToken) {
+async function deploySushiLPYF(communityVaultAddress, tokenAddress, stakingAddress, _sushiSwapToken) {
     await hre.run('compile'); // We are compiling the contracts using subtask
     const [deployer] = await ethers.getSigners(); // We are getting the deployer
 
@@ -76,10 +76,10 @@ async function deploySushiLPYF(communityVaultAddress, entrTokenAddress, stakingA
     const staking = await ethers.getContractAt('Staking', stakingAddress)
 
     const YieldFarmSushiLPToken = await ethers.getContractFactory('YieldFarmSushiLPToken')
-    const yf = await YieldFarmSushiLPToken.deploy(_sushiSwapToken, entrTokenAddress, staking.address, communityVaultAddress)
+    const yf = await YieldFarmSushiLPToken.deploy(_sushiSwapToken, tokenAddress, staking.address, communityVaultAddress)
     await yf.deployTransaction.wait(5)
     console.log(`YieldFarmSushiLPToken pool : `, yf.address)
-    await cv.setAllowance(yf.address, BN.from(13000000).mul(tenPow18))
+    await cv.setAllowance(yf.address, BN.from(150000000).mul(tenPow18))
 
     console.log("Manual initing epoch 0...");
     await staking.manualEpochInit([_sushiSwapToken], 0)
@@ -87,14 +87,14 @@ async function deploySushiLPYF(communityVaultAddress, entrTokenAddress, stakingA
     console.log(`Verifying Sushi ...`);
     await hre.run("verify:verify", {
         address: yf.address,
-        constructorArguments: [_sushiSwapToken, entrTokenAddress, staking.address, communityVaultAddress],
+        constructorArguments: [_sushiSwapToken, tokenAddress, staking.address, communityVaultAddress],
         contract: "contracts/YieldFarmSushiLPToken.sol:YieldFarmSushiLPToken",
     });
 
     console.log('Done!');
 }
 
-async function deploy(entrTokenAddress, communityVaultAddress, startTime, daysPerEpoch, poolTokenAddresses) {
+async function deploy(tokenAddress, communityVaultAddress, startTime, daysPerEpoch, poolTokenAddresses) {
     await hre.run('compile'); // We are compiling the contracts using subtask
     const [deployer] = await ethers.getSigners(); // We are getting the deployer
 
@@ -114,7 +114,7 @@ async function deploy(entrTokenAddress, communityVaultAddress, startTime, daysPe
 
     for (const poolTokenAddress of poolTokenAddresses) {
         console.log(`Deploy ${poolTokenAddress.name} farming`)
-        const yf = await YieldFarmGenericToken.deploy(poolTokenAddress.address, entrTokenAddress, staking.address, communityVaultAddress)
+        const yf = await YieldFarmGenericToken.deploy(poolTokenAddress.address, tokenAddress, staking.address, communityVaultAddress)
         await yf.deployed()
         console.log(`YF pool, ${poolTokenAddress.name}: `, yf.address)
         deployedPoolAddresses.push(yf.address)
@@ -126,7 +126,7 @@ async function deploy(entrTokenAddress, communityVaultAddress, startTime, daysPe
 
     for (const deployedPoolAddress of deployedPoolAddresses) {
         console.log("Setting allowance...")
-        await cv.setAllowance(deployedPoolAddress, BN.from(1000000).mul(tenPow18))
+        await cv.setAllowance(deployedPoolAddress, BN.from(10000000).mul(tenPow18))
     }
 
 
@@ -148,7 +148,7 @@ async function deploy(entrTokenAddress, communityVaultAddress, startTime, daysPe
         console.log(`Verifying ${poolTokenAddress.name} farming`);
         await hre.run("verify:verify", {
             address: deployedPoolAddress,
-            constructorArguments: [poolTokenAddress.address, entrTokenAddress, staking.address, communityVaultAddress],
+            constructorArguments: [poolTokenAddress.address, tokenAddress, staking.address, communityVaultAddress],
             contract: "contracts/YieldFarmGenericToken.sol:YieldFarmGenericToken",
         })
     }
